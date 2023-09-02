@@ -11,8 +11,8 @@
   - [NPM - Local](#npm---local)
   - [Yarn - Local](#yarn---local)
 - [Usage](#usage)
-- [Contribution](#contribution)
-- [License](#license)
+- [Authors](#authors)
+- [Github](#github)
 
 ## Introduction
 
@@ -100,5 +100,11 @@ This will scan all `.js`, `.jsx`, `.ts`, and `.tsx` files within the `src direct
 ## Authors
 
 - Sanel Babij
+
+##
+
+## Github
+
+[Github link](https://github.com/Nelsa-bl/checkLogs)
 
 ##
