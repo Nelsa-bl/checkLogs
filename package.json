@@ -1,0 +1,22 @@
+{
+  "name": "react-logger-checker",
+  "version": "1.0.0",
+  "description": "NPM for locating missed console log lines.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "logger",
+    "react"
+  ],
+  "author": "Sanel Babij",
+  "license": "ISC",
+  "bin": {
+    "react-logger-checker": "./index.js"
+  },
+  "dependencies": {
+    "@babel/parser": "^7.22.14",
+    "@babel/traverse": "^7.22.11"
+  }
+}

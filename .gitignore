@@ -1,0 +1,15 @@
+# Dependency directories
+node_modules/
+
+# Build directories
+build/
+dist/
+
+# Environment files
+.env
+
+# Log files
+*.log
+
+# Other files and directories to ignore
+.DS_Store
