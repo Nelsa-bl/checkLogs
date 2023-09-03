@@ -8,10 +8,10 @@ function checkLogs() {
   const currentDir = process.cwd();
   const searchDir = path.join(currentDir, "src");
 
-  // ANSI escape code to set text color to yellow
   const yellow = "\x1b[33m";
-  // ANSI escape code to reset text color
   const reset = "\x1b[0m";
+
+  let blockStack = []; // Stack to manage block types (try, catch, finally, etc.)
 
   function traverseDir(dir) {
     const files = fs.readdirSync(dir);
@@ -33,8 +33,6 @@ function checkLogs() {
       plugins: ["jsx", "typescript"],
     });
 
-    let inTryCatchFinallyBlock = false;
-
     traverse(ast, {
       enter(path) {
         if (
@@ -42,34 +40,39 @@ function checkLogs() {
             path.node.type
           )
         ) {
-          inTryCatchFinallyBlock = true;
+          blockStack.push(path.node.type);
         }
+
+        const inTryCatchFinallyBlock =
+          blockStack.includes("TryStatement") ||
+          blockStack.includes("CatchClause");
 
         if (path.node.type === "CallExpression") {
           const callee = path.node.callee;
+
           if (inTryCatchFinallyBlock) {
             return;
           }
+
           if (
             callee.type === "MemberExpression" &&
             callee.object.name === "console" &&
             callee.property.name === "log"
           ) {
             const line = path.node.loc.start.line;
-            const column = path.node.loc.start.column;
+
             console.warn(
-              `${yellow}Found a ${"\x1b[4m"}console.log${"\x1b[24m"} at line ${line}, column ${column} in file ${filePath}${reset}`
+              `${yellow}Found a ${"\x1b[4m"}console.log${"\x1b[24m"} at line ${line}, in file ${filePath}${reset}`
             );
           }
         }
       },
       exit(path) {
         if (
-          ["TryStatement", "CatchClause", "BlockStatement"].includes(
-            path.node.type
-          )
+          blockStack.length > 0 &&
+          blockStack[blockStack.length - 1] === path.node.type
         ) {
-          inTryCatchFinallyBlock = false;
+          blockStack.pop();
         }
       },
     });
