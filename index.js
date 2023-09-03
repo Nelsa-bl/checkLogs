@@ -33,7 +33,11 @@ function checkLogs() {
         traverseDir(fullPath);
       }
       // If it's a file with a certain extension, check for logs
-      else if (stats.isFile() && /\.(js|jsx|ts|tsx)$/.test(file)) {
+      else if (
+        stats.isFile() &&
+        /\.(js|jsx|ts|tsx)$/.test(file) &&
+        !file.includes("stories.tsx")
+      ) {
         checkFileForLogs(fullPath);
       }
     }
@@ -79,7 +83,7 @@ function checkLogs() {
               const column = path.node.loc.start.column;
               const relativePath = filePath.split("src")[1] || filePath; // If "src" doesn't exist in the path, use the full path
               console.warn(
-                `${yellow}Found a ${"\x1b[4m"}console.log${"\x1b[24m"} at line ${line}, column ${column} in file \x1b]8;;file://${filePath}\x07${relativePath}\x1b]8;;\x07${reset}`
+                `${yellow}Found a console.log at line ${line}, column ${column} in file \x1b]8;;file://${filePath}\x07${relativePath}\x1b]8;;\x07${reset}`
               );
               totalLogsFound++;
             }
