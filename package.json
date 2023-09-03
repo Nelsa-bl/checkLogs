@@ -1,6 +1,6 @@
 {
   "name": "react-logger-checker",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "NPM for locating missed console log lines.",
   "main": "index.js",
   "scripts": {

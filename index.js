@@ -41,69 +41,66 @@ function checkLogs() {
 
   // Function to check a single file for console.log statements
   function checkFileForLogs(filePath) {
-    // Read the file and parse it into an AST (Abstract Syntax Tree)
     const code = fs.readFileSync(filePath, "utf-8");
     const ast = parser.parse(code, {
       sourceType: "module",
       plugins: ["jsx", "typescript"],
     });
 
-    let inTryCatchFinallyBlock = false;
+    let blockStack = [];
 
-    // Traverse the AST to find console.log statements
     traverse(ast, {
       enter(path) {
-        // Detect if we are inside a try-catch block
         if (
-          path.node.type === "TryStatement" ||
-          path.node.type === "CatchClause"
+          ["TryStatement", "CatchClause", "FinallyStatement"].includes(
+            path.node.type
+          )
         ) {
-          inTryCatchFinallyBlock = true;
+          blockStack.push(path.node.type);
         }
 
-        // Detect if we are inside a block that's not part of a try-catch
         if (
-          path.node.type === "BlockStatement" &&
-          path.parent.type !== "TryStatement" &&
-          path.parent.type !== "CatchClause"
+          path.node.type === "CallExpression" &&
+          path.node.callee.property &&
+          ["then", "catch", "finally"].includes(path.node.callee.property.name)
         ) {
-          inTryCatchFinallyBlock = false;
+          blockStack.push(path.node.callee.property.name);
         }
 
-        // Skip nodes within a try-catch block
-        if (inTryCatchFinallyBlock) {
-          return;
-        }
-
-        // Check for console.log calls
-        if (path.node.type === "CallExpression") {
-          const callee = path.node.callee;
-          if (
-            callee.type === "MemberExpression" &&
-            callee.object.name === "console" &&
-            callee.property.name === "log"
-          ) {
-            // Get the line and column number for the log statement
-            const line = path.node.loc.start.line;
-            const column = path.node.loc.start.column;
-
-            // Print the warning message
-            console.warn(
-              `${yellow}Found a ${"\x1b[4m"}console.log${"\x1b[24m"} at line ${line}, column ${column} in file ${filePath}${reset}`
-            );
-
-            // Increment the counter for total logs found
-            totalLogsFound++;
+        if (blockStack.length === 0) {
+          if (path.node.type === "CallExpression") {
+            const callee = path.node.callee;
+            if (
+              callee.type === "MemberExpression" &&
+              callee.object.name === "console" &&
+              callee.property.name === "log"
+            ) {
+              const line = path.node.loc.start.line;
+              const column = path.node.loc.start.column;
+              const relativePath = filePath.split("src")[1] || filePath; // If "src" doesn't exist in the path, use the full path
+              console.warn(
+                `${yellow}Found a ${"\x1b[4m"}console.log${"\x1b[24m"} at line ${line}, column ${column} in file \x1b]8;;file://${filePath}\x07${relativePath}\x1b]8;;\x07${reset}`
+              );
+              totalLogsFound++;
+            }
           }
         }
       },
       exit(path) {
-        // Detect exiting a try-catch block
         if (
-          path.node.type === "TryStatement" ||
-          path.node.type === "CatchClause"
+          ["TryStatement", "CatchClause", "FinallyStatement"].includes(
+            path.node.type
+          )
         ) {
-          inTryCatchFinallyBlock = false;
+          blockStack.pop();
+        }
+
+        if (
+          path.node.type === "CallExpression" &&
+          path.node.callee.property &&
+          ["then", "catch", "finally"].includes(path.node.callee.property.name)
+        ) {
+          blockStack.pop();
         }
       },
     });
