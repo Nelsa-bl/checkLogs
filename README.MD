@@ -11,6 +11,7 @@
   - [NPM - Local](#npm---local)
   - [Yarn - Local](#yarn---local)
 - [Usage](#usage)
+- [Instructions](#instructions)
 - [Authors](#authors)
 - [Github](#github)
 
@@ -95,7 +96,25 @@ or
 yarn check-logs
 ```
 
-This will scan all `.js`, `.jsx`, `.ts`, and `.tsx` files within the `src directory` and display any `console.log` statements found.
+## Instructions
+
+Byd default this will scan all `.js`, `.jsx`, `.ts`, and `.tsx` files within the `src` directory and display any `console.log` statements found.
+
+### Specifying a Custom Folder
+
+You can specify a custom folder to check by adding it as an argument to the command:
+
+```bash
+npm run check-logs frontend
+```
+
+or
+
+```bash
+yarn check-logs frontend/components
+```
+
+This will then scan the specified folder for any console.log statements.
 
 ## Authors
 
