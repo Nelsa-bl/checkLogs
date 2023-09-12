@@ -27,6 +27,8 @@
 - Color-coded console warnings
 - Line numbers and clickable file paths for quick navigation
 - Ignores commented out `console.log` statements
+- Ignores `console.log` statements inside try/catch blocks
+- Allows ignoring specific `console.log` statements with the comment `// @ignore-console-log-warning-next-line`
 
 ## Global Installation
 
@@ -99,6 +101,17 @@ yarn check-logs
 ## Instructions
 
 Byd default this will scan all `.js`, `.jsx`, `.ts`, and `.tsx` files within the `src` directory and display any `console.log` statements found.
+
+### Ignoring Specific console.log Statements
+
+To ignore a specific `console.log` statement, place the comment `// @ignore-console-log-warning-next-line` on the line directly above the `console.log` you wish to ignore.
+
+For example:
+
+```bash
+// @ignore-console-log-warning-next-line
+console.log("This log will be ignored by the checker.");
+```
 
 ### Specifying a Custom Folder
 
