@@ -142,6 +142,7 @@ function checkLogs() {
     console.log(`${green}✔ You are good to go!${reset}`);
   } else {
     console.warn(`${yellow}Total console.log found: ${totalLogsFound}${reset}`);
+    process.exit(1);
   }
 }
 
